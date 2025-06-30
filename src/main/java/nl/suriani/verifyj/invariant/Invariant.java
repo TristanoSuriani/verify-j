@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 public record Invariant<C>(
         String description,
         Predicate<C> predicate,
-        TypeInvariant type
+        TemporalClause type
 ) {
     public Invariant {
         Objects.requireNonNull(description);

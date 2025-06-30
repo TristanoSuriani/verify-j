@@ -1,7 +1,8 @@
 package nl.suriani.verifyj.invariant;
 
-public enum TypeInvariant {
+public enum TemporalClause {
     EVENTUALLY,
     ALWAYS,
-    NEVER
+    NEVER,
+    AT_LAST
 }

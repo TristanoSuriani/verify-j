@@ -11,7 +11,7 @@ import java.util.List;
 public record Specification<C>(Action<C> init, Any<C> step, SpecificationOptions options, Invariant<C>... invariants) {
 
     public C run() {
-        var context = init.execute(null);
+        C context = tryInit(init, 10);
         var stepCount = 1;
         var attemptCount = 1;
         boolean[] invariantsSatisfaction = initialiseInvariantSatisfactionVector();
@@ -52,9 +52,10 @@ public record Specification<C>(Action<C> init, Any<C> step, SpecificationOptions
         }
         var failingInvariants = finalCheckInvariantSatisfactionVector(invariantsSatisfaction);
         if (!failingInvariants.isEmpty()) {
-            System.out.println("Specification failed at step " + stepCount + ": " + failingInvariants.stream()
+            System.out.println("Specification failed at step " + stepCount + ":\n\n" + failingInvariants.stream()
                     .map(Invariant::description)
-                    .toList());
+                    .map(description -> "\t - " + description + "\n")
+                    .reduce("Failed invariants:\n", String::concat));
         }
         return context;
     }
@@ -67,6 +68,7 @@ public record Specification<C>(Action<C> init, Any<C> step, SpecificationOptions
                 case EVENTUALLY -> false;
                 case ALWAYS -> true;
                 case NEVER -> false;
+                case AT_LAST -> false;
             };
         }
         return invariantSatisfied;
@@ -79,6 +81,7 @@ public record Specification<C>(Action<C> init, Any<C> step, SpecificationOptions
                 case EVENTUALLY -> invariantSatisfaction[i] || invariant.isSatisfiedBy(context);
                 case ALWAYS -> invariantSatisfaction[i] && invariant.isSatisfiedBy(context);
                 case NEVER -> !invariantSatisfaction[i] || !invariant.isSatisfiedBy(context);
+                case AT_LAST -> invariant.isSatisfiedBy(context);
             };
         }
     }
@@ -108,5 +111,15 @@ public record Specification<C>(Action<C> init, Any<C> step, SpecificationOptions
             }
         }
         return failingInvariants;
+    }
+
+    private C tryInit(Action<C> init, int attempts) {
+        C context = null;
+        for (int i = 0; i < attempts; i++) {
+            try {
+                return init.execute(null);
+            } catch (Exception e) {}
+        }
+        throw new RuntimeException("Initialization failed after " + attempts + " attempts.");
     }
 }

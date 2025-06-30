@@ -7,7 +7,7 @@ public interface Invariants {
         return new Invariant<C>(
                 description,
                 predicate,
-                TypeInvariant.EVENTUALLY
+                TemporalClause.EVENTUALLY
         );
     }
 
@@ -15,7 +15,7 @@ public interface Invariants {
         return new Invariant<C>(
                 description,
                 predicate,
-                TypeInvariant.ALWAYS
+                TemporalClause.ALWAYS
         );
     }
 
@@ -23,7 +23,15 @@ public interface Invariants {
         return new Invariant<C>(
                 description,
                 predicate,
-                TypeInvariant.NEVER
+                TemporalClause.NEVER
+        );
+    }
+
+    static<C> Invariant<C> atLast(String description, Predicate<C> predicate) {
+        return new Invariant<C>(
+                description,
+                predicate,
+                TemporalClause.AT_LAST
         );
     }
 }
