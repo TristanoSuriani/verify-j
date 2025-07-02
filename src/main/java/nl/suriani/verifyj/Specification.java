@@ -10,8 +10,18 @@ import java.util.List;
 
 public record Specification<C>(Action<C> init, Any<C> step, SpecificationOptions options, Invariant<C>... invariants) {
 
+    public Specification(Action<C> init, Any<C> step, SpecificationOptions options, List<Invariant<C>> invariants) {
+        this(
+                init,
+                step,
+                options,
+                invariants.toArray(new Invariant[0])
+        );
+    }
+
     public C run() {
-        C context = tryInit(init, 10);
+        C context = tryInit(init, 100);
+        System.out.println(String.format("[%s/%s] (%s) - %s", 0, 0, "init", context));
         var stepCount = 1;
         var attemptCount = 1;
         boolean[] invariantsSatisfaction = initialiseInvariantSatisfactionVector();

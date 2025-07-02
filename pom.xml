@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>nl.suriani</groupId>
-	<artifactId>code.is.text.is.data</artifactId>
+	<artifactId>verify-j</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>code.is.text.is.data</name>
-	<description>CTRL + ALT + DESIGN: Code is Text is Data</description>
+	<name>verify-j</name>
+	<description>A temporal logic simulator for discrete systems with bounded nondeterminism.</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -30,15 +30,6 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>gg.jte</groupId>
-			<artifactId>jte</artifactId>
-			<version>3.1.12</version>
-		</dependency>
 		<dependency>
 			<groupId>gg.jte</groupId>
 			<artifactId>jte-spring-boot-starter-3</artifactId>
@@ -59,50 +50,7 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</path>
-					</annotationProcessorPaths>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>gg.jte</groupId>
-				<artifactId>jte-maven-plugin</artifactId>
-				<version>3.1.12</version>
-				<executions>
-					<execution>
-						<id>jte-generate</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<sourceDirectory>${project.basedir}/src/main/jte</sourceDirectory>
-							<contentType>Html</contentType>
-							<binaryStaticContent>true</binaryStaticContent>
-							<targetResourceDirectory>${project.build.outputDirectory}</targetResourceDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
+
 		</plugins>
 	</build>
 
