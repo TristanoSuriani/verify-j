@@ -1,7 +1,7 @@
 package nl.suriani.verifyj;
 
-public record SpecificationOptions(int maxAttempts, int numberOfSteps) {
-    public SpecificationOptions {
+public record SimulationOptions(int maxAttempts, int numberOfSteps) {
+    public SimulationOptions {
         if (maxAttempts < 1) {
             throw new IllegalArgumentException("maxAttempts must be at least 1");
         }

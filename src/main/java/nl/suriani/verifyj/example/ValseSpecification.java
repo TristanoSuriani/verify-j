@@ -1,7 +1,7 @@
 package nl.suriani.verifyj.example;
 
 import nl.suriani.verifyj.Specification;
-import nl.suriani.verifyj.SpecificationOptions;
+import nl.suriani.verifyj.SimulationOptions;
 import nl.suriani.verifyj.action.Action;
 import nl.suriani.verifyj.action.Any;
 import nl.suriani.verifyj.action.NonDet;
@@ -81,7 +81,7 @@ public class ValseSpecification {
         var specification = new Specification<>(
                 init,
                 step,
-                new SpecificationOptions(500, 250),
+                new SimulationOptions(500, 250),
                 valseWillEventuallyReachNirvana,
                 valseWillAtLastTopSexAndRockAndRoll,
                 valseWillEventuallyTopDrugs,

@@ -1,7 +1,7 @@
 package nl.suriani.verifyj.example.lift;
 
 import nl.suriani.verifyj.Specification;
-import nl.suriani.verifyj.SpecificationOptions;
+import nl.suriani.verifyj.SimulationOptions;
 import nl.suriani.verifyj.action.Action;
 import nl.suriani.verifyj.action.Any;
 import nl.suriani.verifyj.action.NonDet;
@@ -82,7 +82,7 @@ public class LiftSpecification {
         var specification = new Specification<>(
                 init,
                 step,
-                new SpecificationOptions(6000, 2000),
+                new SimulationOptions(6000, 2000),
                 invariants
         );
 
