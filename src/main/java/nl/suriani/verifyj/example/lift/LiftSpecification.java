@@ -19,19 +19,22 @@ public class LiftSpecification {
         var maxFloor = 8;
 
         var init = Action.<Lift>define(ignored ->
-                Lift.init(NonDet.withinRange(-4, 10),
-                        NonDet.withinRange(-4, 10),
+                new Lift(NonDet.withinRange(-4, 10),
                         minFloor,
                         maxFloor,
-                        NonDet.oneOf(Set.of(), Set.of(1, 2, 3), new HashSet<>(List.of(NonDet.withinRange(-4, 10))))));
+                        NonDet.oneOf(Set.of(), Set.of(1, 2, 3), new HashSet<>(List.of(NonDet.withinRange(-4, 10))))
+                )
+        );
 
         var reachFloor = Action.<Lift>define(
                 "reachFloor",
-                lift -> lift.reachFloor(NonDet.withinRange(-10, 30)));
+                lift -> lift.reachFloor(NonDet.withinRange(-4, 10))
+        );
 
         var authoriseFloor = Action.<Lift>define(
                 "authoriseFloor",
-                lift -> lift.authoriseFloor(NonDet.withinRange(-10, 30)));
+                lift -> lift.authoriseFloor(NonDet.withinRange(-4, 10))
+        );
 
         var step = new Any<>(reachFloor, authoriseFloor);
 
@@ -44,38 +47,12 @@ public class LiftSpecification {
                 lift -> lift.minFloor() <= lift.currentFloor() &&
                         lift.maxFloor() >= lift.currentFloor());
 
-        var targetFloorIsAlwaysBetweenMinFloorAndMaxFloor = Invariants.<Lift>always(
-                "Target floor will always be between min floor and max floor",
-                lift -> lift.minFloor() <= lift.targetFloor() &&
-                        lift.maxFloor() >= lift.targetFloor());
-
         var liftWillEventuallyReachAnyFloor = Stream.iterate(minFloor, i -> i + 1)
                 .limit(maxFloor)
                 .map(floor -> Invariants.<Lift>eventually(
                         "Lift will eventually reach floor " + floor,
                         lift -> lift.currentFloor() == floor))
                 .toList();
-
-        var whenGoingUpThenCurrentFloorWillAlwaysBeLessThanTargetFloor = Invariants.<Lift>always(
-                "When going up, current floor will always be less than target floor",
-                lift -> switch (lift.status()) {
-                    case GOING_UP -> lift.currentFloor() < lift.targetFloor();
-                    default -> true;
-                });
-
-        var whenGoingDownThenCurrentFloorWillAlwaysBeMoreThanTargetFloor = Invariants.<Lift>always(
-                "When going up, current floor will always be less than target floor",
-                lift -> switch (lift.status()) {
-                    case GOING_DOWN -> lift.currentFloor() > lift.targetFloor();
-                    default -> true;
-                });
-
-        var whenIdleThenCurrentFloorWillAlwaysTheSameAsTargetFloor = Invariants.<Lift>always(
-                "When going up, current floor will always be less than target floor",
-                lift -> switch (lift.status()) {
-                    case IDLE -> lift.currentFloor() == lift.targetFloor();
-                    default -> true;
-                });
 
         var theCurrentFloorCannotBeInTheListOfAuthorisedFloors = Invariants.<Lift>always(
                 "The current floor cannot be in the list of authorised floors",
@@ -90,22 +67,13 @@ public class LiftSpecification {
                 lift -> lift.authorisedFloors().stream()
                         .allMatch(floor -> lift.minFloor() <= floor && lift.maxFloor() >= floor));
 
-        var whenThereAreNoAuthorisedFloorsThenLiftWillBeIdle = Invariants.<Lift>always(
-                "When there are no authorised floors, then lift will be idle",
-                lift -> lift.authorisedFloors().isEmpty() == (lift.status() == Lift.LiftStatus.IDLE));
-
         var invariants = new ArrayList<>(
                 List.of(
                         minFloorWillAlwaysBeLessThanOrEqualToMaxFloor,
                         currentFloorIsAlwaysBetweenMinFloorAndMaxFloor,
-                        targetFloorIsAlwaysBetweenMinFloorAndMaxFloor,
-                        whenGoingUpThenCurrentFloorWillAlwaysBeLessThanTargetFloor,
-                        whenGoingDownThenCurrentFloorWillAlwaysBeMoreThanTargetFloor,
-                        whenIdleThenCurrentFloorWillAlwaysTheSameAsTargetFloor,
                         theCurrentFloorCannotBeInTheListOfAuthorisedFloors,
                         thereWillBeEventuallyNoAuthorisedFloors,
-                        authorisedFloorsMustAlwaysBeBetweenMinFloorAndMaxFloor,
-                        whenThereAreNoAuthorisedFloorsThenLiftWillBeIdle
+                        authorisedFloorsMustAlwaysBeBetweenMinFloorAndMaxFloor
                 )
         );
 
@@ -114,7 +82,7 @@ public class LiftSpecification {
         var specification = new Specification<>(
                 init,
                 step,
-                new SpecificationOptions(2000, 300),
+                new SpecificationOptions(6000, 2000),
                 invariants
         );
 
