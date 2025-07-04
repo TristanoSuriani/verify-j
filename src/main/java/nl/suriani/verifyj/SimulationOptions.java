@@ -6,7 +6,7 @@ public record SimulationOptions(int maxAttempts, int numberOfSteps) {
             throw new IllegalArgumentException("maxAttempts must be at least 1");
         }
         if (numberOfSteps < 1) {
-            throw new IllegalArgumentException("numberOfSteps must be at least 1");
+            throw new IllegalArgumentException("maxTransitions must be at least 1");
         }
     }
 }

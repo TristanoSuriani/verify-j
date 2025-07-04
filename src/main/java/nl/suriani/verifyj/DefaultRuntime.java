@@ -35,7 +35,7 @@ public class DefaultRuntime<C> implements SimulationRuntime<C> {
         updateInvariantSatisfactionVector(context, invariantsSatisfaction);
         var failingInvariantsAfterInit = intermediateCheckInvariantSatisfactionVector(invariantsSatisfaction);
         if (!failingInvariantsAfterInit.isEmpty()) {
-            System.out.println("Specifications failed at step " + stepCount + ": " + failingInvariantsAfterInit.stream()
+            System.out.println("Specifications failed at transitionNumber " + stepCount + ": " + failingInvariantsAfterInit.stream()
                     .map(Invariant::description)
                     .toList());
 
@@ -43,7 +43,7 @@ public class DefaultRuntime<C> implements SimulationRuntime<C> {
         }
         while (stepCount <= options.numberOfSteps() && attemptCount <= options.maxAttempts()) {
             try {
-                //context = step.execute(context);
+                //context = transitionNumber.execute(context);
                 var action = NonDet.oneOf(specification.step().actions());
                 var actionName = action instanceof Action.NamedAction<C> namedAction ? namedAction.name() : "unknown";
                 context = action.execute(context);
@@ -52,7 +52,7 @@ public class DefaultRuntime<C> implements SimulationRuntime<C> {
                 updateInvariantSatisfactionVector(context, invariantsSatisfaction);
                 var failingInvariants = intermediateCheckInvariantSatisfactionVector(invariantsSatisfaction);
                 if (!failingInvariants.isEmpty()) {
-                    System.out.println("Specifications failed at step " + stepCount + ": " + failingInvariants.stream()
+                    System.out.println("Specifications failed at transitionNumber " + stepCount + ": " + failingInvariants.stream()
                             .map(Invariant::description)
                             .toList());
 
@@ -69,7 +69,7 @@ public class DefaultRuntime<C> implements SimulationRuntime<C> {
         }
         var failingInvariants = finalCheckInvariantSatisfactionVector(invariantsSatisfaction);
         if (!failingInvariants.isEmpty()) {
-            System.out.println("Specification failed at step " + stepCount + ":\n\n" + failingInvariants.stream()
+            System.out.println("Specification failed at transitionNumber " + stepCount + ":\n\n" + failingInvariants.stream()
                     .map(Invariant::description)
                     .map(description -> "\t - " + description + "\n")
                     .reduce("Failed invariants:\n", String::concat));
