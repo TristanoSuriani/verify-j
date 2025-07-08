@@ -29,37 +29,48 @@ public class DefaultRunner<M> implements Runner<M> {
             var action = NonDet.oneOf(spec.step().actions());
             var maybeNewState = tryApplyAction(action, model);
             var newState = maybeNewState.get();
-            var failingPostcondition = findFailingPostconditions(spec, newState);
-            if (failingPostcondition.isEmpty()) {
-                var transition = new Transition<>(model, newState, action.name(), transitionsCount, attemptsCount);
-                transitions.add(transition);
-                transitionsCount++;
-                attemptsCount++;
-                model = newState;
-                continue;
-            }
 
+            var failingStateProperties = spec.stateProperties().stream()
+                    .filter(stateProperty -> stateProperty.not().test(newState))
+                    .map(StateProperty::name)
+                    .distinct()
+                    .toList();
+
+            if (!failingStateProperties.isEmpty()) {
+                return new Report<M>(
+                        List.of(
+                                new OutcomeSimulation<M>(OutcomeSimulationStatus.FAILED_STATE_PROPERTIES)
+                                        .withFailedStateProperties(failingStateProperties)
+                        )
+                );
+            }
+            var transition = new Transition<>(model, newState, action.name(), transitionsCount, attemptsCount);
+            transitions.add(transition);
+            transitionsCount++;
+            attemptsCount++;
+            model = newState;
+        }
+
+        var failingTemporalProperties = spec.temporalProperties().stream()
+                .filter(temporalProperty -> temporalProperty.not().test(transitions))
+                .map(TemporalProperty::name)
+                .distinct()
+                .toList();
+
+        if (!failingTemporalProperties.isEmpty()) {
             return new Report<M>(
                     List.of(
-                            new OutcomeSimulation<M>(OutcomeSimulationStatus.FAILED_POSTCONDITIONS)
-                                    .withFailedPostConditions(failingPostcondition)
+                            new OutcomeSimulation<M>(OutcomeSimulationStatus.FAILED_TEMPORAL_PROPERTIES)
+                                    .withFailedTemporalProperties(failingTemporalProperties)
                     )
             );
         }
 
         return new Report<M>(
                 List.of(
-                        new OutcomeSimulation<M>(OutcomeSimulationStatus.FAILED_INVARIANTS)
-                                .withFailedInvariants(List.of("stringMustBeEventuallyUpperCase"))
+                        new OutcomeSimulation<M>(OutcomeSimulationStatus.SUCCESS)
                 )
         );
-    }
-
-    List<String> findFailingPostconditions(Specification<M> spec, M model) {
-        return spec.postconditions().stream()
-                .filter(postcondition -> !postcondition.test(model))
-                .map(Postcondition::name)
-                .toList();
     }
 
     private Optional<M> tryInit(Init<M> init) {
@@ -79,5 +90,4 @@ public class DefaultRunner<M> implements Runner<M> {
             return Optional.empty();
         }
     }
-
 }

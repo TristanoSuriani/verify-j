@@ -6,8 +6,8 @@ public enum OutcomeSimulationStatus {
     TIMEOUT,
     ERROR,
     FAILED_INIT,
-    FAILED_POSTCONDITIONS,
-    FAILED_INVARIANTS;
+    FAILED_STATE_PROPERTIES,
+    FAILED_TEMPORAL_PROPERTIES;
 
     public boolean isSuccess() {
         return this == SUCCESS;
@@ -29,11 +29,11 @@ public enum OutcomeSimulationStatus {
         return this == FAILED_INIT;
     }
 
-    public boolean isFailedPostconditions() {
-        return this == FAILED_POSTCONDITIONS;
+    public boolean isFailedStateProperties() {
+        return this == FAILED_STATE_PROPERTIES;
     }
 
     public boolean isFailedInvariants() {
-        return this == FAILED_INVARIANTS;
+        return this == FAILED_TEMPORAL_PROPERTIES;
     }
 }

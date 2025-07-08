@@ -6,13 +6,13 @@ import java.util.Objects;
 public record OutcomeSimulation<M>(OutcomeSimulationStatus status,
                                    List<Transition<M>> transitions,
                                    List<String> failedPostConditions,
-                                   List<String> failedInvariants) {
+                                   List<String> failedTemporalProperties) {
 
     public OutcomeSimulation {
         Objects.requireNonNull(status);
         Objects.requireNonNull(transitions);
         Objects.requireNonNull(failedPostConditions);
-        Objects.requireNonNull(failedInvariants);
+        Objects.requireNonNull(failedTemporalProperties);
     }
 
     public OutcomeSimulation(List<Transition<M>> transitions, OutcomeSimulationStatus status) {
@@ -24,18 +24,18 @@ public record OutcomeSimulation<M>(OutcomeSimulationStatus status,
     }
 
     public OutcomeSimulation<M> withTransitions(List<Transition<M>> transitions) {
-        return new OutcomeSimulation<>(status, transitions, failedPostConditions, failedInvariants);
+        return new OutcomeSimulation<>(status, transitions, failedPostConditions, failedTemporalProperties);
     }
 
-    public OutcomeSimulation<M> withFailedPostConditions(List<String> failedPostConditions) {
-        return new OutcomeSimulation<>(status, transitions, failedPostConditions, failedInvariants);
+    public OutcomeSimulation<M> withFailedStateProperties(List<String> failedPostConditions) {
+        return new OutcomeSimulation<>(status, transitions, failedPostConditions, failedTemporalProperties);
     }
 
-    public OutcomeSimulation<M> withFailedInvariants(List<String> failedInvariants) {
-        return new OutcomeSimulation<>(status, transitions, failedPostConditions, failedInvariants);
+    public OutcomeSimulation<M> withFailedTemporalProperties(List<String> failedTemporalProperties) {
+        return new OutcomeSimulation<>(status, transitions, failedPostConditions, failedTemporalProperties);
     }
 
     public OutcomeSimulation<M> withStatus(OutcomeSimulationStatus status) {
-        return new OutcomeSimulation<>(status, transitions, failedPostConditions, failedInvariants);
+        return new OutcomeSimulation<>(status, transitions, failedPostConditions, failedTemporalProperties);
     }
 }

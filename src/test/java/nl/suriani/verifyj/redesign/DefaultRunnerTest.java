@@ -13,7 +13,7 @@ class DefaultRunnerTest {
             new SimulationOptions(1, 50, 10, false);
 
     @Test
-    void failEarlyOnPostConditions() {
+    void failEarlyOnStateProperties() {
         var runner = new DefaultRunner<String>(simulationOptionsFailEarlyOnConstraintsViolation);
         var init = new Init<String>(() -> "Initial State");
 
@@ -22,42 +22,58 @@ class DefaultRunnerTest {
 
         var step = new Step<>(toUpperCase, toLowerCase);
 
-        var cannotMixUpperCaseAndLowerCase = new Postcondition<String>("cannotMixUpperCaseAndLowerCase",
+        var cannotMixUpperCaseAndLowerCase = new StateProperty<String>("cannotMixUpperCaseAndLowerCase",
                 s -> s.chars().anyMatch(Character::isUpperCase) && s.chars().anyMatch(Character::isLowerCase));
 
         var specification = new Specification<>(init, step)
-                .withPostconditions(cannotMixUpperCaseAndLowerCase);
+                .withStateProperty(cannotMixUpperCaseAndLowerCase);
 
         var report = runner.apply(specification);
 
         var outcomeSimulation = report.outcomeSimulations().getFirst();
-        assertEquals(OutcomeSimulationStatus.FAILED_POSTCONDITIONS, outcomeSimulation.status());
+        assertEquals(OutcomeSimulationStatus.FAILED_STATE_PROPERTIES, outcomeSimulation.status());
         assertEquals("cannotMixUpperCaseAndLowerCase", outcomeSimulation.failedPostConditions().getFirst());
     }
 
     @Test
-    void failEarlyOnInvariants() {
+    void failEarlyOnTemporalProperties() {
         var runner = new DefaultRunner<String>(simulationOptionsFailEarlyOnConstraintsViolation);
         var init = new Init<>(() -> "Initial State");
 
-        var toUpperCase = new NamedAction<String>("toUpperCase", String::toUpperCase);
+        var toUpperCase = new NamedAction<String>("toUpperCase", ignored -> ignored);
         var toLowerCase = new NamedAction<String>("toLowerCase", String::toLowerCase);
 
         var step = new Step<>(toUpperCase, toLowerCase);
 
-        var stringMustBeEventuallyUpperCase = new Invariant<String>("stringMustBeEventuallyUpperCase",
-                transitions -> transitions.stream()
-                        .map(Transition::to)
-                        .anyMatch(t -> t.toUpperCase().equals(t)));
+        var stringMustBeEventuallyUpperCase = TemporalProperties.<String>eventually("stringMustBeEventuallyUpperCase",
+                transition -> transition.to().toUpperCase().equals(transition.to()));
 
         var specification = new Specification<>(init, step)
-                .withInvariants(stringMustBeEventuallyUpperCase);
+                .withTemporalProperties(stringMustBeEventuallyUpperCase);
 
         var report = runner.apply(specification);
 
         var outcomeSimulation = report.outcomeSimulations().getFirst();
-        assertEquals(OutcomeSimulationStatus.FAILED_INVARIANTS, outcomeSimulation.status());
-        assertEquals("stringMustBeEventuallyUpperCase", outcomeSimulation.failedInvariants().getFirst());
+        assertEquals(OutcomeSimulationStatus.FAILED_TEMPORAL_PROPERTIES, outcomeSimulation.status());
+        assertEquals("stringMustBeEventuallyUpperCase", outcomeSimulation.failedTemporalProperties().getFirst());
+    }
+
+    @Test
+    void noProperties() {
+        var runner = new DefaultRunner<String>(simulationOptionsFailAtTheEnd);
+        var init = new Init<>(() -> "Initial State");
+
+        var toUpperCase = new NamedAction<String>("toUpperCase", String::toUpperCase); // action is not behaving as expected
+        var toLowerCase = new NamedAction<String>("toLowerCase", String::toLowerCase);
+
+        var step = new Step<>(toUpperCase, toLowerCase);
+
+        var specification = new Specification<>(init, step);
+
+        var report = runner.apply(specification);
+
+        var outcomeSimulation = report.outcomeSimulations().getFirst();
+        assertEquals(OutcomeSimulationStatus.SUCCESS, outcomeSimulation.status());
     }
 
 }

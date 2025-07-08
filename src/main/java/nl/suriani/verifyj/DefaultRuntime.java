@@ -72,7 +72,7 @@ public class DefaultRuntime<C> implements SimulationRuntime<C> {
             System.out.println("Specification failed at transitionNumber " + stepCount + ":\n\n" + failingInvariants.stream()
                     .map(Invariant::description)
                     .map(description -> "\t - " + description + "\n")
-                    .reduce("Failed invariants:\n", String::concat));
+                    .reduce("Failed temporalProperties:\n", String::concat));
         }
         return new Outcome.Success();
     }
