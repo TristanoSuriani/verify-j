@@ -1,13 +1,19 @@
-package nl.suriani.verifyj.redesign;
+package nl.suriani.verifyj;
 
 public enum OutcomeSimulationStatus {
-    SUCCESS,
-    FAILURE,
-    TIMEOUT,
-    ERROR,
-    FAILED_INIT,
-    FAILED_STATE_PROPERTIES,
-    FAILED_TEMPORAL_PROPERTIES;
+    SUCCESS("Success"),
+    FAILURE("Failure"),
+    TIMEOUT("Timeout"),
+    ERROR("Error"),
+    FAILED_INIT("Failed initialization"),
+    FAILED_STATE_PROPERTIES("Failed state properties"),
+    FAILED_TEMPORAL_PROPERTIES("Failed temporal properties");
+
+    private String value;
+
+    OutcomeSimulationStatus(String value) {
+        this.value = value;
+    }
 
     public boolean isSuccess() {
         return this == SUCCESS;
@@ -35,5 +41,9 @@ public enum OutcomeSimulationStatus {
 
     public boolean isFailedInvariants() {
         return this == FAILED_TEMPORAL_PROPERTIES;
+    }
+
+    public String value() {
+        return value;
     }
 }

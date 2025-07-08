@@ -1,17 +1,17 @@
-package nl.suriani.verifyj.redesign;
+package nl.suriani.verifyj;
 
 import java.util.List;
 import java.util.Objects;
 
 public record OutcomeSimulation<M>(OutcomeSimulationStatus status,
                                    List<Transition<M>> transitions,
-                                   List<String> failedPostConditions,
+                                   List<String> failedStateProperties,
                                    List<String> failedTemporalProperties) {
 
     public OutcomeSimulation {
         Objects.requireNonNull(status);
         Objects.requireNonNull(transitions);
-        Objects.requireNonNull(failedPostConditions);
+        Objects.requireNonNull(failedStateProperties);
         Objects.requireNonNull(failedTemporalProperties);
     }
 
@@ -24,7 +24,7 @@ public record OutcomeSimulation<M>(OutcomeSimulationStatus status,
     }
 
     public OutcomeSimulation<M> withTransitions(List<Transition<M>> transitions) {
-        return new OutcomeSimulation<>(status, transitions, failedPostConditions, failedTemporalProperties);
+        return new OutcomeSimulation<>(status, transitions, failedStateProperties, failedTemporalProperties);
     }
 
     public OutcomeSimulation<M> withFailedStateProperties(List<String> failedPostConditions) {
@@ -32,10 +32,10 @@ public record OutcomeSimulation<M>(OutcomeSimulationStatus status,
     }
 
     public OutcomeSimulation<M> withFailedTemporalProperties(List<String> failedTemporalProperties) {
-        return new OutcomeSimulation<>(status, transitions, failedPostConditions, failedTemporalProperties);
+        return new OutcomeSimulation<>(status, transitions, failedStateProperties, failedTemporalProperties);
     }
 
     public OutcomeSimulation<M> withStatus(OutcomeSimulationStatus status) {
-        return new OutcomeSimulation<>(status, transitions, failedPostConditions, failedTemporalProperties);
+        return new OutcomeSimulation<>(status, transitions, failedStateProperties, failedTemporalProperties);
     }
 }

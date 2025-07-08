@@ -1,5 +1,6 @@
 package nl.suriani.verifyj.redesign;
 
+import nl.suriani.verifyj.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,11 +29,11 @@ class DefaultRunnerTest {
         var specification = new Specification<>(init, step)
                 .withStateProperty(cannotMixUpperCaseAndLowerCase);
 
-        var report = runner.apply(specification);
+        var report = runner.run(specification);
 
         var outcomeSimulation = report.outcomeSimulations().getFirst();
         assertEquals(OutcomeSimulationStatus.FAILED_STATE_PROPERTIES, outcomeSimulation.status());
-        assertEquals("cannotMixUpperCaseAndLowerCase", outcomeSimulation.failedPostConditions().getFirst());
+        assertEquals("cannotMixUpperCaseAndLowerCase", outcomeSimulation.failedStateProperties().getFirst());
     }
 
     @Test
@@ -51,7 +52,7 @@ class DefaultRunnerTest {
         var specification = new Specification<>(init, step)
                 .withTemporalProperties(stringMustBeEventuallyUpperCase);
 
-        var report = runner.apply(specification);
+        var report = runner.run(specification);
 
         var outcomeSimulation = report.outcomeSimulations().getFirst();
         assertEquals(OutcomeSimulationStatus.FAILED_TEMPORAL_PROPERTIES, outcomeSimulation.status());
@@ -70,7 +71,7 @@ class DefaultRunnerTest {
 
         var specification = new Specification<>(init, step);
 
-        var report = runner.apply(specification);
+        var report = runner.run(specification);
 
         var outcomeSimulation = report.outcomeSimulations().getFirst();
         assertEquals(OutcomeSimulationStatus.SUCCESS, outcomeSimulation.status());

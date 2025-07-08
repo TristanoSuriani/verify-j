@@ -1,4 +1,4 @@
-package nl.suriani.verifyj.redesign;
+package nl.suriani.verifyj;
 
 import java.util.List;
 import java.util.function.Predicate;

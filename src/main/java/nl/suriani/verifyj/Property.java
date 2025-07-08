@@ -1,6 +1,4 @@
-package nl.suriani.verifyj.redesign;
-
-import java.util.function.Predicate;
+package nl.suriani.verifyj;
 
 public sealed interface Property permits StateProperty, TemporalProperty {
 }

@@ -1,4 +1,4 @@
-package nl.suriani.verifyj.redesign;
+package nl.suriani.verifyj;
 
 import java.util.Arrays;
 import java.util.List;
