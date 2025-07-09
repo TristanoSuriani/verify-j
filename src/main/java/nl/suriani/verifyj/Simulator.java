@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class DefaultRunner<M> implements Runner<M> {
+public class Simulator<M> implements ExecutionModel<M, Report<M>> {
     private final SimulationOptions simulationOptions;
 
-    public DefaultRunner(SimulationOptions simulationOptions) {
+    public Simulator(SimulationOptions simulationOptions) {
         this.simulationOptions = simulationOptions;
     }
 

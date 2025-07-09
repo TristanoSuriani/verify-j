@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DefaultRunnerTest {
+class SimulatorTest {
 
     private final static SimulationOptions simulationOptionsFailEarlyOnConstraintsViolation =
             new SimulationOptions(1, 50, 10, true);
@@ -15,7 +15,7 @@ class DefaultRunnerTest {
 
     @Test
     void failEarlyOnStateProperties() {
-        var runner = new DefaultRunner<String>(simulationOptionsFailEarlyOnConstraintsViolation);
+        var runner = new Simulator<String>(simulationOptionsFailEarlyOnConstraintsViolation);
         var init = new Init<String>(() -> "Initial State");
 
         var toUpperCase = new NamedAction<String>("toUpperCase", s -> s); // action is not behaving as expected
@@ -38,7 +38,7 @@ class DefaultRunnerTest {
 
     @Test
     void failEarlyOnTemporalProperties() {
-        var runner = new DefaultRunner<String>(simulationOptionsFailEarlyOnConstraintsViolation);
+        var runner = new Simulator<String>(simulationOptionsFailEarlyOnConstraintsViolation);
         var init = new Init<>(() -> "Initial State");
 
         var toUpperCase = new NamedAction<String>("toUpperCase", ignored -> ignored);
@@ -61,7 +61,7 @@ class DefaultRunnerTest {
 
     @Test
     void noProperties() {
-        var runner = new DefaultRunner<String>(simulationOptionsFailAtTheEnd);
+        var runner = new Simulator<String>(simulationOptionsFailAtTheEnd);
         var init = new Init<>(() -> "Initial State");
 
         var toUpperCase = new NamedAction<String>("toUpperCase", String::toUpperCase); // action is not behaving as expected

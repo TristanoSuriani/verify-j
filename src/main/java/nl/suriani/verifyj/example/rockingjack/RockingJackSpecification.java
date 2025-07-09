@@ -83,12 +83,16 @@ public class RockingJackSpecification {
                     whenSumIsLessThan50RockingJackIsTakenAbackUnlessSexIs60OrMoreOrHeFoundNirvana
                 );
 
-        var runner = new DefaultRunner<RockingJack>(
-                new SimulationOptions(2, 500, 250, true)
+        var runner = new Simulator<RockingJack>(
+                new SimulationOptions(10, 500, 250, true)
         );
 
         var report = runner.run(specification);
         System.out.println(report);
+
+        System.out.println(new StateSpaceDigraphGenerator<RockingJack>(
+                jack -> jack.status().name()
+        ).run(report));
     }
 
 

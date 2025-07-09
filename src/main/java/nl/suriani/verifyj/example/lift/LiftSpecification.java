@@ -79,12 +79,16 @@ public class LiftSpecification {
                 step
         );
 
-        var runner = new DefaultRunner<Lift>(new SimulationOptions(1,
+        var runner = new Simulator<Lift>(new SimulationOptions(1,
                 6000,
                 2000,
                 true));
 
         var report = runner.run(specification.withTemporalProperties(temporalProperties));
         System.out.println(report);
+
+        System.out.println(new StateSpaceDigraphGenerator<Lift>(
+                lift -> "Floor_" + lift.currentFloor()
+        ).run(report));
     }
 }
