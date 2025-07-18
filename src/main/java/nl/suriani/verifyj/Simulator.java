@@ -97,7 +97,7 @@ public class Simulator<M> implements ExecutionModel<M, Report<M>> {
 
     private Optional<M> tryApplyAction(NamedAction<M> action, M model) {
         try {
-            return Optional.of(action.expression().apply(model));
+            return Optional.of(action.apply(model));
         } catch (Exception e) {
             return Optional.empty();
         }

@@ -9,33 +9,22 @@ import java.util.stream.Collectors;
 public record Specification<M>(
         Init<M> init,
         Step<M> step,
-        List<Guard<M>> guards,
         List<StateProperty<M>> stateProperties,
         List<TemporalProperty<M>> temporalProperties
 ) {
     public Specification(Init<M> init, Step<M> step) {
-        this(init, step, List.of(), List.of(), List.of());
+        this(init, step, List.of(), List.of());
     }
 
     public Specification(Init<M> init,
                          Step<M> step,
-                         List<Guard<M>> guards,
                          List<StateProperty<M>> stateProperties,
                          List<TemporalProperty<M>> temporalProperties) {
 
         Objects.requireNonNull(init, "init is null");
         Objects.requireNonNull(step, "step is null");
-        Objects.requireNonNull(guards, "Guards is null");
         Objects.requireNonNull(stateProperties, "stateProperties is null");
         Objects.requireNonNull(temporalProperties, "temporalProperties is null");
-
-        var guardNames = guards.stream()
-                .map(Guard::name)
-                .collect(Collectors.toSet());
-
-        if (guardNames.size() != guards.size()) {
-            throw new IllegalArgumentException("Guards must have unique names: " + guardNames);
-        }
 
         var statePropertiesNames = stateProperties.stream()
                 .map(StateProperty::name)
@@ -53,45 +42,34 @@ public record Specification<M>(
             throw new IllegalArgumentException("Temporal properties must have unique names: " + temporalPropertiesNames);
         }
 
-        var allNames = new HashSet<>(guardNames);
-        allNames.addAll(statePropertiesNames);
+        var allNames = new HashSet<>(statePropertiesNames);
         allNames.addAll(temporalPropertiesNames);
 
-        if (allNames.size() != guardNames.size() + statePropertiesNames.size() + temporalPropertiesNames.size()) {
-            throw new IllegalArgumentException("All properties (guards, state, temporal) must have unique names");
+        if (allNames.size() != statePropertiesNames.size() + temporalPropertiesNames.size()) {
+            throw new IllegalArgumentException("All properties (state, temporal) must have unique names");
         }
 
         this.init = init;
         this.step = step;
-        this.guards = List.copyOf(guards);
         this.stateProperties = List.copyOf(stateProperties);
         this.temporalProperties = List.copyOf(temporalProperties);
     }
-
-    public Specification<M> withGuards(List<Guard<M>> guards) {
-        return new Specification<>(init, step, guards, stateProperties, temporalProperties);
-    }
-
-    @SafeVarargs
-    public final Specification<M> withGuards(Guard<M>... guards) {
-        return new Specification<>(init, step, Arrays.asList(guards), stateProperties, temporalProperties);
-    }
-
+    
     public Specification<M> withStateProperty(List<StateProperty<M>> stateProperties) {
-        return new Specification<>(init, step, guards, stateProperties, temporalProperties);
+        return new Specification<>(init, step, stateProperties, temporalProperties);
     }
 
     @SafeVarargs
     public final Specification<M> withStateProperty(StateProperty<M>... stateProperties) {
-        return new Specification<>(init, step, guards, Arrays.asList(stateProperties), temporalProperties);
+        return new Specification<>(init, step, Arrays.asList(stateProperties), temporalProperties);
     }
 
     public Specification<M> withTemporalProperties(List<TemporalProperty<M>> temporalProperties) {
-        return new Specification<>(init, step, guards, stateProperties, temporalProperties);
+        return new Specification<>(init, step, stateProperties, temporalProperties);
     }
 
     @SafeVarargs
     public final Specification<M> withTemporalProperties(TemporalProperty<M>... temporalProperties) {
-        return new Specification<>(init, step, guards, stateProperties, Arrays.asList(temporalProperties));
+        return new Specification<>(init, step, stateProperties, Arrays.asList(temporalProperties));
     }
 }

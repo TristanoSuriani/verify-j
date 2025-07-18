@@ -6,47 +6,55 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 public interface TemporalProperties {
-    static <M> TemporalProperty<M> always(String name, Predicate<Transition<M>> predicate) {
-        Predicate<List<Transition<M>>> predicateOnList = list -> list.stream().allMatch(predicate);
+    static <M> TemporalProperty<M> always(String name, Predicate<M> predicate) {
+        Predicate<List<Transition<M>>> predicateOnList = list -> list.stream()
+                .map(Transition::to)
+                .allMatch(predicate);
         return new TemporalProperty<>(name, predicateOnList);
     }
 
-    static <M> TemporalProperty<M> never(String name, Predicate<Transition<M>> predicate) {
-        Predicate<List<Transition<M>>> predicateOnList = list -> list.stream().noneMatch(predicate);
+    static <M> TemporalProperty<M> never(String name, Predicate<M> predicate) {
+        Predicate<List<Transition<M>>> predicateOnList = list -> list.stream()
+                .map(Transition::to)
+                .noneMatch(predicate);
         return new TemporalProperty<>(name, predicateOnList);
     }
 
-    static <M> TemporalProperty<M> eventually(String name, Predicate<Transition<M>> predicate) {
-        Predicate<List<Transition<M>>> predicateOnList = list -> list.stream().anyMatch(predicate);
+    static <M> TemporalProperty<M> eventually(String name, Predicate<M> predicate) {
+        Predicate<List<Transition<M>>> predicateOnList = list -> list.stream()
+                .map(Transition::to)
+                .anyMatch(predicate);
         return new TemporalProperty<>(name, predicateOnList);
     }
 
-    static <M> TemporalProperty<M> initially(String name, Predicate<Transition<M>> predicate) {
+    static <M> TemporalProperty<M> initially(String name, Predicate<M> predicate) {
         Predicate<List<Transition<M>>> predicateOnList =
-                list -> !list.isEmpty() && predicate.test(list.getFirst());
+                list -> !list.isEmpty() && predicate.test(list.getFirst().to());
 
         return new TemporalProperty<>(name, predicateOnList);
     }
 
-    static <M> TemporalProperty<M> atLast(String name, Predicate<Transition<M>> predicate) {
+    static <M> TemporalProperty<M> atLast(String name, Predicate<M> predicate) {
         Predicate<List<Transition<M>>> predicateOnList =
-                list -> !list.isEmpty() && predicate.test(list.getLast());
+                list -> !list.isEmpty() && predicate.test(list.getLast().to());
 
         return new TemporalProperty<>(name, predicateOnList);
     }
 
-    static <M> TemporalProperty<M> exactlyOnce(String name, Predicate<Transition<M>> predicate) {
-        return new TemporalProperty<>(name, list -> list.stream().filter(predicate).count() == 1);
+    static <M> TemporalProperty<M> exactlyOnce(String name, Predicate<M> predicate) {
+        return new TemporalProperty<>(name, list -> list.stream()
+                .map(Transition::to)
+                .filter(predicate).count() == 1);
     }
 
-    static <M> TemporalProperty<M> xAndThenThenEventuallyY(String name, Predicate<Transition<M>> xPredicate,
-                                               Predicate<Transition<M>> yPredicate) {
+    static <M> TemporalProperty<M> xAndThenThenEventuallyY(String name, Predicate<M> xPredicate,
+                                               Predicate<M> yPredicate) {
 
         return new TemporalProperty<>(name, list -> {
             boolean foundX = false;
             for (Transition<M> transition : list) {
-                foundX = foundX || xPredicate.test(transition);
-                if (foundX && yPredicate.test(transition)) {
+                foundX = foundX || xPredicate.test(transition.to());
+                if (foundX && yPredicate.test(transition.to())) {
                     return true;
                 }
             }

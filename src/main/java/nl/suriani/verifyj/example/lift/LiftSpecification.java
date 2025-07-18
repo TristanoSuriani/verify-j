@@ -35,32 +35,32 @@ public class LiftSpecification {
 
         var minFloorWillAlwaysBeLessThanOrEqualToMaxFloor = TemporalProperties.<Lift>always(
                 "Min floor will always be less than or equal to max floor",
-                transition -> transition.to().minFloor() <= transition.to().maxFloor());
+                transition -> transition.minFloor() <= transition.maxFloor());
 
         var currentFloorIsAlwaysBetweenMinFloorAndMaxFloor = TemporalProperties.<Lift>always(
                 "Current floor will always be between min floor and max floor",
-                transition -> transition.to().minFloor() <= transition.to().currentFloor() &&
-                        transition.to().maxFloor() >= transition.to().currentFloor());
+                transition -> transition.minFloor() <= transition.currentFloor() &&
+                        transition.maxFloor() >= transition.currentFloor());
 
         var liftWillEventuallyReachAnyFloor = Stream.iterate(minFloor, i -> i + 1)
                 .limit(maxFloor)
                 .map(floor -> TemporalProperties.<Lift>eventually(
                         "Lift will eventually reach floor " + floor,
-                        transition -> transition.to().currentFloor() == floor))
+                        transition -> transition.currentFloor() == floor))
                 .toList();
 
         var theCurrentFloorCannotBeInTheListOfAuthorisedFloors = TemporalProperties.<Lift>always(
                 "The current floor cannot be in the list of authorised floors",
-                transition -> !transition.to().authorisedFloors().contains(transition.to().currentFloor()));
+                transition -> !transition.authorisedFloors().contains(transition.currentFloor()));
 
         var thereWillBeEventuallyNoAuthorisedFloors = TemporalProperties.<Lift>eventually(
                 "There will be eventually no authorised floors",
-                transition -> transition.to().authorisedFloors().isEmpty());
+                transition -> transition.authorisedFloors().isEmpty());
 
         var authorisedFloorsMustAlwaysBeBetweenMinFloorAndMaxFloor = TemporalProperties.<Lift>always(
                 "Authorised floors must always be between min floor and max floor",
-                transition -> transition.to().authorisedFloors().stream()
-                        .allMatch(floor -> transition.to().minFloor() <= floor && transition.to().maxFloor() >= floor));
+                transition -> transition.authorisedFloors().stream()
+                        .allMatch(floor -> transition.minFloor() <= floor && transition.maxFloor() >= floor));
 
         var temporalProperties = new ArrayList<>(
                 List.of(
