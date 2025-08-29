@@ -13,7 +13,7 @@
     <version>0.10.0</version>
     <name>verify-j</name>
     <description>A temporal logic simulator for discrete systems with bounded nondeterminism.</description>
-    <url/>
+    <url>https://github.com/TristanoSuriani/verify-j</url>
     <licenses>
         <license>
             <name>MIT</name>
