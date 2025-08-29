@@ -16,7 +16,7 @@ class SimulatorTest {
     @Test
     void failEarlyOnStateProperties() {
         var runner = new Simulator<String>(simulationOptionsFailEarlyOnConstraintsViolation);
-        var init = new Init<String>(() -> "Initial State");
+        var init = new Init<>(() -> "Initial State");
 
         var toUpperCase = new NamedAction<String>("toUpperCase", s -> s); // action is not behaving as expected
         var toLowerCase = new NamedAction<String>("toLowerCase", String::toLowerCase);
@@ -47,7 +47,7 @@ class SimulatorTest {
         var step = new Step<>(toUpperCase, toLowerCase);
 
         var stringMustBeEventuallyUpperCase = TemporalProperties.<String>eventually("stringMustBeEventuallyUpperCase",
-                transition -> transition.to().toUpperCase().equals(transition.to()));
+                s -> s.toUpperCase().equals(s));
 
         var specification = new Specification<>(init, step)
                 .withTemporalProperties(stringMustBeEventuallyUpperCase);
