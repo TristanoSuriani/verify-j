@@ -2,7 +2,7 @@ package nl.suriani.verifyj.example.rockingjack;
 
 import nl.suriani.verifyj.*;
 
-public class RockingJackSpecification {
+class RockingJackSpecification {
     public static void main(String... args) {
         var init = new Init<>(
                 () -> RockingJack.init(NonDet.withinRange(-20, 120),

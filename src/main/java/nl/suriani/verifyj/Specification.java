@@ -6,16 +6,36 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a specification for a model, including initialization, steps, and properties.
+ *
+ * @param <M> the model type
+ */
 public record Specification<M>(
         Init<M> init,
         Step<M> step,
         List<StateProperty<M>> stateProperties,
         List<TemporalProperty<M>> temporalProperties
 ) {
+    /**
+     * Constructs a Specification with the given init and step, and empty property lists.
+     *
+     * @param init the initialization action
+     * @param step the step definition
+     */
     public Specification(Init<M> init, Step<M> step) {
         this(init, step, List.of(), List.of());
     }
 
+    /**
+     * Constructs a Specification with the given init, step, state properties, and temporal properties.
+     *
+     * @param init the initialization action
+     * @param step the step definition
+     * @param stateProperties the list of state properties
+     * @param temporalProperties the list of temporal properties
+     * @throws IllegalArgumentException if property names are not unique
+     */
     public Specification(Init<M> init,
                          Step<M> step,
                          List<StateProperty<M>> stateProperties,
@@ -54,20 +74,44 @@ public record Specification<M>(
         this.stateProperties = List.copyOf(stateProperties);
         this.temporalProperties = List.copyOf(temporalProperties);
     }
-    
+
+    /**
+     * Returns a new Specification with the given state properties.
+     *
+     * @param stateProperties the list of state properties
+     * @return a new Specification with updated state properties
+     */
     public Specification<M> withStateProperty(List<StateProperty<M>> stateProperties) {
         return new Specification<>(init, step, stateProperties, temporalProperties);
     }
 
+    /**
+     * Returns a new Specification with the given state properties.
+     *
+     * @param stateProperties the varargs list of state properties
+     * @return a new Specification with updated state properties
+     */
     @SafeVarargs
     public final Specification<M> withStateProperty(StateProperty<M>... stateProperties) {
         return new Specification<>(init, step, Arrays.asList(stateProperties), temporalProperties);
     }
 
+    /**
+     * Returns a new Specification with the given temporal properties.
+     *
+     * @param temporalProperties the list of temporal properties
+     * @return a new Specification with updated temporal properties
+     */
     public Specification<M> withTemporalProperties(List<TemporalProperty<M>> temporalProperties) {
         return new Specification<>(init, step, stateProperties, temporalProperties);
     }
 
+    /**
+     * Returns a new Specification with the given temporal properties.
+     *
+     * @param temporalProperties the varargs list of temporal properties
+     * @return a new Specification with updated temporal properties
+     */
     @SafeVarargs
     public final Specification<M> withTemporalProperties(TemporalProperty<M>... temporalProperties) {
         return new Specification<>(init, step, stateProperties, Arrays.asList(temporalProperties));

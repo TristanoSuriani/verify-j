@@ -4,12 +4,26 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Represents a report containing the results of one or more outcome simulations.
+ *
+ * @param <M> the model type
+ */
 public record Report<M>(List<OutcomeSimulation<M>> outcomeSimulations) {
-
+    /**
+     * Constructs a Report with the given outcome simulations.
+     *
+     * @param outcomeSimulations the list of outcome simulations
+     */
     public Report {
         Objects.requireNonNull(outcomeSimulations);
     }
 
+    /**
+     * Returns a string representation of the report, including all simulations and their results.
+     *
+     * @return the string representation of the report
+     */
     @Override
     public String toString() {
         var builder = new StringBuilder();

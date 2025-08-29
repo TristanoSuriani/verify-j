@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class LiftSpecification {
+class LiftSpecification {
     public static void main(String[] args) {
         var minFloor = -2;
         var maxFloor = 8;

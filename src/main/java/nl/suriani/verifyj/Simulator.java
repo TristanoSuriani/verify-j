@@ -4,13 +4,29 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * Simulator for executing specifications and generating reports.
+ *
+ * @param <M> the model type
+ */
 public class Simulator<M> implements ExecutionModel<M, Report<M>> {
     private final SimulationOptions simulationOptions;
 
+    /**
+     * Constructs a Simulator with the given simulation options.
+     *
+     * @param simulationOptions the simulation options
+     */
     public Simulator(SimulationOptions simulationOptions) {
         this.simulationOptions = simulationOptions;
     }
 
+    /**
+     * Runs the given specification and returns a report.
+     *
+     * @param spec the specification to run
+     * @return the report of the simulation
+     */
     @Override
     public Report<M> run(Specification<M> spec) {
         var outcomes = Stream.iterate(0, i -> i < simulationOptions.numberOfSimulations(), i -> i + 1)
@@ -81,6 +97,13 @@ public class Simulator<M> implements ExecutionModel<M, Report<M>> {
                                 .withTransitions(transitions);
     }
 
+    /**
+     * Attempts to initialize the model using the provided Init function.
+     * Tries up to 100 times.
+     *
+     * @param init the initialization function
+     * @return an Optional containing the model if successful, otherwise empty
+     */
     private Optional<M> tryInit(Init<M> init) {
         for (var i = 0; i < 100; i++) {
             try {
@@ -95,6 +118,13 @@ public class Simulator<M> implements ExecutionModel<M, Report<M>> {
         return Optional.empty();
     }
 
+    /**
+     * Attempts to apply the given action to the model.
+     *
+     * @param action the action to apply
+     * @param model the model to apply the action to
+     * @return an Optional containing the new model if successful, otherwise empty
+     */
     private Optional<M> tryApplyAction(NamedAction<M> action, M model) {
         try {
             return Optional.of(action.apply(model));

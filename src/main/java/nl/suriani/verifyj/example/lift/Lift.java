@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public record Lift(int currentFloor,
+record Lift(int currentFloor,
                    int minFloor,
                    int maxFloor,
                    Set<Integer> authorisedFloors) {
