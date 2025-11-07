@@ -112,6 +112,9 @@ public class Simulator<M> implements ExecutionModel<M, Report<M>> {
                     return Optional.of(model);
                 }
             } catch (Exception e) {
+                if (simulationOptions.trace()) {
+                    System.out.println(e);
+                }
                 continue;
             }
         }

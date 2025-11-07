@@ -1,6 +1,5 @@
-package nl.suriani.verifyj.redesign;
+package nl.suriani.verifyj;
 
-import nl.suriani.verifyj.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

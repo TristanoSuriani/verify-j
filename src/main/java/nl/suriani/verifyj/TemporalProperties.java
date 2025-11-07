@@ -143,21 +143,45 @@ public interface TemporalProperties {
      * @param yPredicate the predicate to check on the next transition
      * @return a temporal property enforcing the described behavior
      */
-    static <M> TemporalProperty<M> xAndThenAlwaysImmediatelyY(String name, Predicate<Transition<M>> xPredicate,
-                                                               Predicate<Transition<M>> yPredicate) {
+    static <M> TemporalProperty<M> xMustOccurAndBeImmediatelyFollowedByY(String name, Predicate<Transition<M>> xPredicate,
+                                                                         Predicate<Transition<M>> yPredicate) {
 
         return new TemporalProperty<>(name, list -> {
-                var transitionWhereXIsTrue = IntStream.range(0, list.size() - 1)
-                        .filter(i -> xPredicate.test(list.get(i)))
-                        .toArray();
+            var indicesOfX = IntStream.range(0, list.size())
+                    .filter(i -> xPredicate.test(list.get(i)))
+                    .toArray();
 
-                if (transitionWhereXIsTrue.length == 0) {
-                    return false;
-                }
+            if (indicesOfX.length == 0) {
+                return false;
+            }
 
-                return Arrays.stream(transitionWhereXIsTrue)
-                        .mapToObj(i -> list.get(i + 1))
-                        .allMatch(yPredicate);
+            return Arrays.stream(indicesOfX)
+                    .allMatch(i -> (i < list.size() - 1) && yPredicate.test(list.get(i + 1)));
             });
+    }
+
+    /**
+     * Creates a temporal property that requires: after xPredicate holds for a transition, yPredicate must hold for all immediately following transitions where xPredicate was true.
+     *
+     * @param name the name of the property
+     * @param xPredicate the predicate to check on the current transition
+     * @param yPredicate the predicate to check on the next transition
+     * @return a temporal property enforcing the described behavior
+     */
+    static <M> TemporalProperty<M> whenXOccursThenAllTheFollowingXMustSatisfyY(String name, Predicate<Transition<M>> xPredicate,
+                                                                         Predicate<Transition<M>> yPredicate) {
+
+        return new TemporalProperty<>(name, list -> {
+            var indicesOfX = IntStream.range(0, list.size())
+                    .filter(i -> xPredicate.test(list.get(i)))
+                    .toArray();
+
+            if (indicesOfX.length == 0) {
+                return false;
+            }
+
+            return Arrays.stream(indicesOfX)
+                    .allMatch(i -> (i < list.size() - 1) && yPredicate.test(list.get(i + 1)));
+        });
     }
 }
